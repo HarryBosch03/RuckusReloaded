@@ -24,9 +24,9 @@ namespace RuckusReloaded.Runtime.Menu
                 buttons[i] = Instantiate(buttonPrefab, buttonPrefab.transform.parent);
             }
 
-            SetupButton(buttons[0], "Resume", () => Open(false));
-            SetupButton(buttons[1], "Reload Scene", ReloadScene);
-            SetupButton(buttons[2], "Quit", Quit);
+            SetupButton(buttons[0], "RESUME", () => Open(false));
+            SetupButton(buttons[1], "RELOAD SCENE", ReloadScene);
+            SetupButton(buttons[2], "QUIT", Quit);
 
             pauseAction.performed += OnPauseActionPerformed;
             pauseAction.Enable();
