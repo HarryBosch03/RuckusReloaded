@@ -1,34 +1,42 @@
-using System;
+using RuckusReloaded.Runtime.Projectiles;
 using RuckusReloaded.Runtime.Utility;
-using RuckusReloaded.Runtime.Vitality;
 using UnityEngine;
-using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
 namespace RuckusReloaded.Runtime.Player
 {
     public class PlayerGun : PlayerWeapon
     {
-        public DamageArgs damage;
+        public Projectile projectile;
+        public ProjectileSpawnArgs args;
         public bool singleFire = false;
         public float fireRate = 180.0f;
         public int projectilesPerShot = 1;
+        [Range(0.0f, 10.0f)]
         public float spread;
 
         [Space]
-        public GameObject hitFX;
-        public ParticleSystem trailFX;
-        public float trailDensity = 16.0f;
+        public int ammo;
+        public int maxAmmo = -1;
+        
+        [Space]
         public Vector3 muzzleOffset;
 
+        private PlayerController player;
         private Animator animator;
         private bool shootFlag;
         private float lastFireTime;
 
         private ParticleSystem flash;
+        private ParticleSystem smoke;
+
+        public override string AmmoLabel => ammo >= 0 ? $"{ammo}/{maxAmmo}" : "--/--";
+        public Vector3 MuzzlePosition => (MainCam ? MainCam.transform : transform).TransformPoint(muzzleOffset);
 
         protected override void Awake()
         {
+            player = GetComponentInParent<PlayerController>();
+            
             base.Awake();
             var viewport = transform.Find("Viewport");
             animator = viewport.GetComponentInChildren<Animator>();
@@ -39,6 +47,9 @@ namespace RuckusReloaded.Runtime.Player
             }
 
             flash = viewport.Find<ParticleSystem>("Flash");
+            smoke = viewport.Find<ParticleSystem>("Smoke");
+
+            ammo = maxAmmo;
         }
 
         private void Update()
@@ -66,61 +77,34 @@ namespace RuckusReloaded.Runtime.Player
         private void Shoot()
         {
             if (Time.time < lastFireTime + 60.0f / fireRate) return;
+            if (ammo == 0) return;
 
             for (var i = 0; i < projectilesPerShot; i++)
             {
                 var random = Random.insideUnitCircle;
                 var direction = MainCam.transform.TransformDirection(random.x * spread, random.y * spread, 10.0f).normalized;
-                var point = MainCam.transform.position;
 
-                var ray = new Ray(point, direction);
-                var end = ray.GetPoint(100.0f);
-                if (Physics.Raycast(ray, out var hit))
-                {
-                    end = hit.point;
-                    ProcessHit(ray, hit);
-                }
-                
-                if (trailFX)
-                {
-                    var start = transform.TransformPoint(muzzleOffset);
-                    var vector = end - start;
-                    var dist = vector.magnitude;
-                    var step = 1.0f / trailDensity;
-                    var dir = vector / dist;
-                    
-                    for (var d = 0.0f; d < dist; d += step)
-                    {
-                        trailFX.Emit(new ParticleSystem.EmitParams()
-                        {
-                            position = start + dir * d,
-                        }, 1);
-                    }
-                }
+                projectile.SpawnFromPrefab(player.gameObject, args, MuzzlePosition, direction);
             }
 
             animator.Play("Shoot", 0, 0.0f);
             if (flash) flash.Play();
+            if (smoke && !smoke.isPlaying) smoke.Play();
 
             lastFireTime = Time.time;
+            ammo--;
         }
-
-        private void ProcessHit(Ray ray, RaycastHit hit)
-        {
-            var damageable = hit.collider.GetComponentInParent<IDamageable>();
-            if ((Object)damageable)
-            {
-                damageable.Damage(new DamageInstance(damage, hit.point, ray.direction));
-            }
-
-            if (hitFX) Instantiate(hitFX, hit.point, Quaternion.LookRotation(hit.normal));
-        }
-
+        
         private void OnDrawGizmosSelected()
         {
             Gizmos.matrix = transform.localToWorldMatrix;
             Gizmos.color = Color.yellow;
             Gizmos.DrawSphere(muzzleOffset, 0.04f);
+
+            Gizmos.DrawRay(MuzzlePosition, new Vector3(spread, 0.0f, 10.0f).normalized);
+            Gizmos.DrawRay(MuzzlePosition, new Vector3(-spread, 0.0f, 10.0f).normalized);
+            Gizmos.DrawRay(MuzzlePosition, new Vector3(0.0f, spread, 10.0f).normalized);
+            Gizmos.DrawRay(MuzzlePosition, new Vector3(0.0f, -spread, 10.0f).normalized);
         }
 
         private void ResetFlags()

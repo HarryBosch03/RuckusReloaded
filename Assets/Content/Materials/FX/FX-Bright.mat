@@ -21,7 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: FX-Bright
-  m_Shader: {fileID: 4800000, guid: 076726d3a04740dea7bcca4ca3df660e, type: 3}
+  m_Shader: {fileID: 4800000, guid: 75a501ccad45f9943be0f678307c7af7, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords:
   - _SURFACE_TYPE_TRANSPARENT

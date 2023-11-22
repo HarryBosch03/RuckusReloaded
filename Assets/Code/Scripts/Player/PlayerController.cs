@@ -1,3 +1,4 @@
+using System;
 using RuckusReloaded.Runtime.Entities;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -55,11 +56,14 @@ namespace RuckusReloaded.Runtime.Player
             var delta = Vector2.zero;
             delta += Mouse.current.delta.ReadValue() * mouseSensitivity * Mathf.Min(1.0f, Time.timeScale);
             Biped.viewRotation += delta;
-            
-            mainCam.transform.position = Biped.view.position;
-            mainCam.transform.rotation = Biped.view.rotation;
 
             if (JumpAction.WasPressedThisFrame()) jumpFlag = true;
+        }
+
+        private void LateUpdate()
+        {
+            mainCam.transform.position = Biped.view.position;
+            mainCam.transform.rotation = Biped.view.rotation;
         }
     }
 }

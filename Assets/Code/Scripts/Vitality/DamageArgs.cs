@@ -1,6 +1,4 @@
 ﻿
-using UnityEngine;
-
 namespace RuckusReloaded.Runtime.Vitality
 {
     [System.Serializable]
@@ -8,5 +6,10 @@ namespace RuckusReloaded.Runtime.Vitality
     {
         public float damage = 1;
         public bool ignoreLocationalDamage;
+
+        public static implicit operator DamageArgs(int damage) => new()
+        {
+            damage = damage,
+        };
     }
 }

@@ -107,6 +107,20 @@ Shader "UI/Outline"
                 return OUT;
             }
 
+            float dither(float4 ScreenPosition)
+            {
+                float2 uv = ScreenPosition.xy * _ScreenParams.xy;
+                float DITHER_THRESHOLDS[16] =
+                {
+                    1.0 / 17.0,  9.0 / 17.0,  3.0 / 17.0, 11.0 / 17.0,
+                    13.0 / 17.0,  5.0 / 17.0, 15.0 / 17.0,  7.0 / 17.0,
+                    4.0 / 17.0, 12.0 / 17.0,  2.0 / 17.0, 10.0 / 17.0,
+                    16.0 / 17.0,  8.0 / 17.0, 14.0 / 17.0,  6.0 / 17.0
+                };
+                uint index = (uint(uv.x) % 4) * 4 + uint(uv.y) % 4;
+                return DITHER_THRESHOLDS[index];
+            }
+        
             fixed4 frag(v2f IN) : SV_Target
             {
                 //Round up the alpha color coming from the interpolator (to 1.0/256.0 steps)
@@ -134,7 +148,10 @@ Shader "UI/Outline"
                 #ifdef UNITY_UI_ALPHACLIP
                 clip (color.a - 0.001);
                 #endif
-
+                
+                //float2 ditherUV = (IN.vertex.xy) / _ScreenParams.xy * 0.5;
+                //color.rgb = floor(color.rgb * 8 + dither(float4(ditherUV, 0.0, 0.0))) / 8.0;
+                
                 color.rgb *= color.a;
 
                 return color;

@@ -1,46 +1,72 @@
 ﻿using System;
-using Unity.Collections;
 using UnityEngine;
 
 namespace RuckusReloaded.Runtime.Player
 {
     public class WeaponSway : MonoBehaviour
     {
-        public float max = 8.0f;
-        public float response = 0.5f;
-        public float invSmoothing = 15.0f;
-        [Range(0.0f, 1.0f)]
-        [ReadOnly]
-        public float evaluation;
-        public Vector3 rotationOffset;
+        public float translationLag = 1.0f;
+        public float rotationLag = 1.0f;
+        public float smoothing = 1.0f;
         public Vector3 originOffset;
 
+        private Transform mainCam;
+        private Vector3 lastPosition;
         private Vector2 lastRotation;
-        private Vector2 smoothedDelta;
+
+        private Vector2 smoothedRotationalOffset;
+        private Vector3 smoothedTranslationalOffset;
 
         private void OnEnable()
         {
-            if (!transform.parent) enabled = false;
+            mainCam = Camera.main.transform;
         }
 
-        private void LateUpdate()
+        private void FixedUpdate()
         {
-            var cameraRotation = new Vector2(transform.parent.eulerAngles.y, -transform.parent.eulerAngles.x);
-            var delta = componentWise(x => Mathf.DeltaAngle(x(cameraRotation), x(lastRotation)));
-            lastRotation = cameraRotation;
+            UpdateTranslationLag();
+        }
 
-            smoothedDelta = componentWise(x => Mathf.LerpAngle(x(smoothedDelta), x(delta), invSmoothing * Time.deltaTime));
-            
-            var offset = componentWise(x => Mathf.Atan(x(smoothedDelta) * response) * 2.0f * max / Mathf.PI);
-            evaluation = offset.magnitude / max;
-            
-            transform.localRotation = Quaternion.Euler(-offset.y, offset.x, 0.0f) * Quaternion.Euler(rotationOffset);
-            transform.localPosition = originOffset + transform.localRotation * -originOffset;
+        private void Update()
+        {
+            UpdateRotationLag();
 
-            Vector2 componentWise(Func<Func<Vector2, float>, float> operation)
+            ApplyLag();
+        }
+
+        private void UpdateTranslationLag()
+        {
+            if (Time.deltaTime < float.Epsilon) return;
+            var position = mainCam.position;
+            var velocity = (position - lastPosition) / Time.deltaTime;
+
+            smoothedTranslationalOffset = Vector3.Lerp(smoothedTranslationalOffset, velocity, Time.deltaTime / Mathf.Max(Time.deltaTime, smoothing));
+
+            lastPosition = position;
+        }
+
+        private void ApplyLag()
+        {
+            transform.localRotation = Quaternion.Euler(-smoothedRotationalOffset.y * rotationLag, smoothedRotationalOffset.x * rotationLag, 0.0f);
+
+            transform.localPosition = originOffset - transform.localRotation * originOffset;
+            transform.position += smoothedTranslationalOffset * translationLag;
+        }
+
+        private void UpdateRotationLag()
+        {
+            if (Time.deltaTime < float.Epsilon) return;
+
+            var rotation = new Vector2(-mainCam.eulerAngles.y, mainCam.eulerAngles.x);
+            var delta = new Vector2
             {
-                return new Vector2(operation(v => v.x), operation(v => v.y));
-            }
+                x = Mathf.DeltaAngle(lastRotation.x, rotation.x),
+                y = Mathf.DeltaAngle(lastRotation.y, rotation.y),
+            } / Time.deltaTime;
+
+            var offset = delta;
+            smoothedRotationalOffset = Vector2.Lerp(smoothedRotationalOffset, offset, Time.deltaTime / Mathf.Max(Time.deltaTime, smoothing));
+            lastRotation = rotation;
         }
 
         private void OnDrawGizmosSelected()
