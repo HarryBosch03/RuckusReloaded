@@ -1,11 +1,10 @@
 using System;
-using RuckusReloaded.Runtime.Entities;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace RuckusReloaded.Runtime.Player
 {
-    [RequireComponent(typeof(BipedController))]
+    [RequireComponent(typeof(PlayerMovement))]
     public class PlayerController : MonoBehaviour
     {
         public InputActionAsset inputAsset;
@@ -18,12 +17,12 @@ namespace RuckusReloaded.Runtime.Player
         public InputAction MoveAction { get; private set; }
         public InputAction JumpAction { get; private set; }
         public InputAction ShootAction { get; private set; }
-        public BipedController Biped { get; private set; }
+        public PlayerMovement Biped { get; private set; }
         
         private void Awake()
         {
             mainCam = Camera.main;
-            Biped = GetComponent<BipedController>();
+            Biped = GetComponent<PlayerMovement>();
 
             MoveAction = inputAsset.FindAction("Move");
             JumpAction = inputAsset.FindAction("Jump");

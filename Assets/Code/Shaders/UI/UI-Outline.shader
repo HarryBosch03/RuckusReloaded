@@ -40,8 +40,8 @@ Shader "UI/Outline"
 
         Cull Off
         Lighting Off
-        ZWrite Off
-        ZTest [unity_GUIZTestMode]
+        ZWrite On
+        ZTest Always
         Blend One OneMinusSrcAlpha
         ColorMask [_ColorMask]
 
@@ -152,6 +152,7 @@ Shader "UI/Outline"
                 //float2 ditherUV = (IN.vertex.xy) / _ScreenParams.xy * 0.5;
                 //color.rgb = floor(color.rgb * 8 + dither(float4(ditherUV, 0.0, 0.0))) / 8.0;
                 
+                clip(color.a - 0.1);
                 color.rgb *= color.a;
 
                 return color;

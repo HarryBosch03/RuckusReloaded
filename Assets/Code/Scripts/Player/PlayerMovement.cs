@@ -1,12 +1,11 @@
 using RuckusReloaded.Runtime.Utility;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-namespace RuckusReloaded.Runtime.Entities
+namespace RuckusReloaded.Runtime.Player
 {
     [SelectionBase]
     [DisallowMultipleComponent]
-    public class BipedController : MonoBehaviour
+    public class PlayerMovement : MonoBehaviour
     {
         #region Properties
         public float mouseSensitivity = 0.3f;
