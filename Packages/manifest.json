@@ -1,7 +1,9 @@
 {
   "dependencies": {
     "com.unity.2d.sprite": "1.0.0",
+    "com.unity.ai.navigation": "1.0.0-exp.4",
     "com.unity.burst": "1.7.3",
+    "com.unity.editorcoroutines": "1.0.0",
     "com.unity.ide.rider": "3.0.15",
     "com.unity.inputsystem": "1.4.4",
     "com.unity.mathematics": "1.2.1",

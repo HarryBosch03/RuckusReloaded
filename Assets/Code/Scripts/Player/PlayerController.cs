@@ -1,24 +1,28 @@
 using System;
+using System.Collections.Generic;
+using RuckusReloaded.Runtime.Core;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace RuckusReloaded.Runtime.Player
 {
     [RequireComponent(typeof(PlayerMovement))]
-    public class PlayerController : MonoBehaviour
+    public class PlayerController : MonoBehaviour, IPersonality
     {
         public InputActionAsset inputAsset;
         public float mouseSensitivity = 0.3f;
 
         private Camera mainCam;
-        private float height;
         private bool jumpFlag;
 
         public InputAction MoveAction { get; private set; }
         public InputAction JumpAction { get; private set; }
         public InputAction ShootAction { get; private set; }
         public PlayerMovement Biped { get; private set; }
-        
+        public Vector3 LookTarget => Biped.Center;
+
+        public static readonly List<PlayerController> All = new();
+
         private void Awake()
         {
             mainCam = Camera.main;
@@ -33,6 +37,8 @@ namespace RuckusReloaded.Runtime.Player
         {
             inputAsset.Enable();
             Cursor.lockState = CursorLockMode.Locked;
+            
+            All.Add(this);
         }
 
         private void OnDisable()
@@ -48,6 +54,8 @@ namespace RuckusReloaded.Runtime.Player
             
             Biped.jump = jumpFlag;
             jumpFlag = false;
+
+            All.Remove(this);
         }
 
         private void Update()
