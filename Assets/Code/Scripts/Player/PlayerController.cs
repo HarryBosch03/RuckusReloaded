@@ -45,6 +45,8 @@ namespace RuckusReloaded.Runtime.Player
         {
             inputAsset.Disable();
             Cursor.lockState = CursorLockMode.None;
+            
+            All.Remove(this);
         }
 
         private void FixedUpdate()
@@ -54,8 +56,6 @@ namespace RuckusReloaded.Runtime.Player
             
             Biped.jump = jumpFlag;
             jumpFlag = false;
-
-            All.Remove(this);
         }
 
         private void Update()

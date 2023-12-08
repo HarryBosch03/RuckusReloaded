@@ -3,11 +3,17 @@ using RuckusReloaded.Runtime.Npc.StateMachines;
 
 namespace RuckusReloaded.Runtime.Npc.Enemies.Behaviours
 {
-    public class Brian : NpcBehaviour
+    public class Brian : NpcBehaviour<BipedalNpc>
     {
-        public override void BuildStateMachine(StateMachine<NpcBehaviour> sm)
+        public StationaryGuard idle;
+        public ShootAtAgro attack;
+        
+        public override State<BipedalNpc> MakeTree()
         {
-            sm.states.Add(new StandIdle("Idle"));
+            idle.next = () => attack;
+            attack.next = () => idle;
+            
+            return idle;
         }
     }
 }

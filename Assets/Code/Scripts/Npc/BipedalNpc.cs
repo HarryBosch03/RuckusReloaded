@@ -20,6 +20,7 @@ namespace RuckusReloaded.Runtime.Npc
         public HealthController Health { get; private set; }
         public Rigidbody Body => Movement.body;
 
+        public bool FaceMovement { get; set; } = true;
         public float MoveSpeed { get; set; } = 1.0f;
 
         private void Awake()
@@ -54,6 +55,11 @@ namespace RuckusReloaded.Runtime.Npc
             var direction = targetPosition - transform.position;
             direction.y = 0.0f;
             Movement.moveInput = direction * MoveSpeed;
+
+            if (FaceMovement && direction.magnitude > 0.1f)
+            {
+                LookDirection(direction.normalized);
+            }
         }
 
         public void PathTo(Vector3 position)
@@ -74,14 +80,20 @@ namespace RuckusReloaded.Runtime.Npc
             navPathIndex = 0;
         }
 
-        public void LookIn(Vector3 direction)
+        public void LookAt(GameObject gameObject)
+        {
+            var center = IPersonality.LookTargetOf(gameObject);
+            LookDirection(center - Movement.view.transform.position);
+        }
+        
+        public void LookDirection(Vector3 direction)
         {
             direction.Normalize();
             Movement.viewRotation = new Vector2
             {
                 x = Mathf.Atan2(direction.x, direction.z),
                 y = Mathf.Asin(direction.y)
-            };
+            } * Mathf.Rad2Deg;
         }
 
         private void OnDrawGizmosSelected()

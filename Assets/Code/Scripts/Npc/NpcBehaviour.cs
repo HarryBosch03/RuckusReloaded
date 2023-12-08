@@ -3,41 +3,32 @@ using UnityEngine;
 
 namespace RuckusReloaded.Runtime.Npc
 {
-    public abstract class NpcBehaviour : MonoBehaviour
+    public abstract class NpcBehaviour<T> : MonoBehaviour
     {
         public string currentState;
         
-        private StateMachine<NpcBehaviour> stateMachine;
+        private StateMachine<T> stateMachine;
         
-        public abstract void BuildStateMachine(StateMachine<NpcBehaviour> sm);
+        public abstract State<T> MakeTree();
 
         private void Awake()
         {
-            stateMachine = new StateMachine<NpcBehaviour>(null, this);
-            BuildStateMachine(stateMachine);
-            stateMachine.Initialize(null);
+            var target = GetComponent<T>();
+            
+            stateMachine = new StateMachine<T>(target);
+            stateMachine.ChangeState(MakeTree());
         }
-
-        private void OnEnable()
-        {
-            stateMachine.Enter();
-        }
-
+        
         private void FixedUpdate()
         {
             stateMachine.FixedUpdate();
 
-            currentState = stateMachine.CurrentState.name ?? "null";
+            currentState = stateMachine.state?.GetType().Name ?? "null";
         }
 
         private void Update()
         {
             stateMachine.Update();
-        }
-
-        private void OnDisable()
-        {
-            stateMachine.Exit();
         }
     }
 }

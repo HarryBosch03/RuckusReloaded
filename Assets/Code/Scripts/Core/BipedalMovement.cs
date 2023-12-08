@@ -48,6 +48,8 @@ namespace RuckusReloaded.Runtime.Core
         {
             body = gameObject.GetOrAddComponent<Rigidbody>();
             view = transform.Find("View");
+
+            body.constraints = RigidbodyConstraints.FreezeRotation;
         }
 
         private void FixedUpdate()
