@@ -5,16 +5,17 @@ using RuckusReloaded.Runtime.Npc.StateMachines;
 using RuckusReloaded.Runtime.Projectiles;
 using RuckusReloaded.Runtime.Vitality;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace RuckusReloaded.Runtime.Npc.Enemies.States
 {
     [System.Serializable]
     public class ShootAtAgro : State<BipedalNpc>
     {
-        public float windUp;
-        public int projectiles;
-        public float delay;
-        public float windDown;
+        public int windUp = 40;
+        public int volleyCount = 3;
+        public int shootDelay = 5;
+        public int windDown = 20;
         
         [Space]
         public ProjectileSpawnArgs projectileSpawnArgs;
@@ -23,40 +24,19 @@ namespace RuckusReloaded.Runtime.Npc.Enemies.States
 
         public Transition next;
         private GameObject agro;
-        private IEnumerator routine;
+
+        public int counter;
+        public int timer;
 
         public override void Enter()
         {
+            counter = 0;
+            timer = 0;
+            
             agro = Blackboard.Get<GameObject>("agro");
             if (!agro)
             {
                 sm.ChangeState(next());
-                return;
-            }
-
-            routine = Routine();
-        }
-
-        private IEnumerator Routine()
-        {
-            yield return wait(windUp);
-
-            for (var i = 0; i < projectiles; i++)
-            {
-                SpawnProjectile();
-                yield return wait(delay);
-            }
-            
-            yield return wait(windDown);
-
-            IEnumerator wait(float secconds)
-            {
-                var t = 0.0f;
-                while (t < secconds)
-                {
-                    t += Time.deltaTime;
-                    yield return null;
-                }
             }
         }
 
@@ -68,10 +48,36 @@ namespace RuckusReloaded.Runtime.Npc.Enemies.States
 
         public override void FixedUpdate()
         {
-            if (routine.MoveNext())
+            if (counter == 0)
             {
-                sm.ChangeState(next());
+                if (timer > windUp)
+                {
+                    timer = 0;
+                    counter++;
+                }
             }
+            else if (counter - 1 < volleyCount)
+            {
+                if (timer == 1)
+                {
+                    SpawnProjectile();
+                }
+                
+                if (timer > shootDelay)
+                {
+                    timer = 0;
+                    counter++;
+                }
+            }
+            else
+            {
+                if (timer > windDown)
+                {
+                    sm.ChangeState(next());
+                }
+            }
+            
+            timer++;
             
             Target.LookAt(agro);
         }

@@ -155,6 +155,63 @@ Transform:
   m_Father: {fileID: 1700605810}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &63349135
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 6581828442987950448, guid: 0d37b3895eb2cb04f889b14c13606ae1, type: 3}
+      propertyPath: m_Name
+      value: GunHit
+      objectReference: {fileID: 0}
+    - target: {fileID: 6581828442987950463, guid: 0d37b3895eb2cb04f889b14c13606ae1, type: 3}
+      propertyPath: m_RootOrder
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 6581828442987950463, guid: 0d37b3895eb2cb04f889b14c13606ae1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.76
+      objectReference: {fileID: 0}
+    - target: {fileID: 6581828442987950463, guid: 0d37b3895eb2cb04f889b14c13606ae1, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.058
+      objectReference: {fileID: 0}
+    - target: {fileID: 6581828442987950463, guid: 0d37b3895eb2cb04f889b14c13606ae1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -14.043
+      objectReference: {fileID: 0}
+    - target: {fileID: 6581828442987950463, guid: 0d37b3895eb2cb04f889b14c13606ae1, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 6581828442987950463, guid: 0d37b3895eb2cb04f889b14c13606ae1, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 6581828442987950463, guid: 0d37b3895eb2cb04f889b14c13606ae1, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6581828442987950463, guid: 0d37b3895eb2cb04f889b14c13606ae1, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6581828442987950463, guid: 0d37b3895eb2cb04f889b14c13606ae1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 6581828442987950463, guid: 0d37b3895eb2cb04f889b14c13606ae1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6581828442987950463, guid: 0d37b3895eb2cb04f889b14c13606ae1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 0d37b3895eb2cb04f889b14c13606ae1, type: 3}
 --- !u!1 &74974055
 GameObject:
   m_ObjectHideFlags: 0
@@ -1255,14 +1312,14 @@ MonoBehaviour:
     damage:
       damage: 3
       ignoreLocationalDamage: 0
-    speed: 200
+    speed: 600
     lifetime: 2
     gravityScale: 1
     pierce: 0
+    spread: 0
+    count: 1
   singleFire: 1
   fireRate: 700
-  projectilesPerShot: 1
-  spread: 0
   ammo: 0
   maxAmmo: -1
   muzzleOffset: {x: 0, y: -0.105, z: 0.73}
@@ -6495,6 +6552,37 @@ MonoBehaviour:
   delay: 2
   damageNumber: {fileID: 1842892774}
   visualiser: {fileID: 167507365}
+--- !u!1 &406911550
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 406911551}
+  m_Layer: 0
+  m_Name: Pickup
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &406911551
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 406911550}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -7.5, y: 1, z: -5.28}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &417665065
 GameObject:
   m_ObjectHideFlags: 0
@@ -12421,14 +12509,14 @@ MonoBehaviour:
     damage:
       damage: 1
       ignoreLocationalDamage: 0
-    speed: 200
+    speed: 600
     lifetime: 2
     gravityScale: 1
     pierce: 0
+    spread: 0.1
+    count: 9
   singleFire: 1
   fireRate: 120
-  projectilesPerShot: 14
-  spread: 1.33
   ammo: 0
   maxAmmo: 20
   muzzleOffset: {x: 0, y: -0.105, z: 0.73}
@@ -12608,8 +12696,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f79fdc14f9b4bff82a6ffe843e989e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentHealth: 0
-  maxHealth: 0
+  currentHealth: 6
+  maxHealth: 6
 --- !u!54 &1306353982
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -12666,22 +12754,25 @@ MonoBehaviour:
   currentState: 
   idle:
     range: 15
-    position: {x: 0, y: 0, z: 0}
   attack:
-    windUp: 0.5
-    projectiles: 3
-    delay: 0.2
-    windDown: 0.6
+    windUp: 40
+    volleyCount: 3
+    shootDelay: 5
+    windDown: 20
     projectileSpawnArgs:
       damage:
         damage: 1
         ignoreLocationalDamage: 1
-      speed: 40
+      speed: 30
       lifetime: 5
       gravityScale: 0
       pierce: 0
+      spread: 0
+      count: 1
     projectile: {fileID: 7265259607640830723, guid: 6eb2d5cf987b58146addf4aa156f87e5, type: 3}
     spawnPoint: {fileID: 1088462618}
+    counter: 4
+    timer: 22
 --- !u!65 &1330550750
 BoxCollider:
   m_ObjectHideFlags: 0

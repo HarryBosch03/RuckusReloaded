@@ -1,4 +1,5 @@
 ﻿using RuckusReloaded.Runtime.Vitality;
+using UnityEngine;
 
 namespace RuckusReloaded.Runtime.Projectiles
 {
@@ -10,5 +11,8 @@ namespace RuckusReloaded.Runtime.Projectiles
         public float lifetime = 2.0f;
         public float gravityScale = 1.0f;
         public int pierce = 0;
+        [Range(0.0f, 1.0f)]
+        public float spread = 0.0f;
+        public int count = 1;
     }
 }

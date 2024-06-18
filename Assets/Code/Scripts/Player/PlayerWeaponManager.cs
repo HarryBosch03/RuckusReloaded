@@ -38,6 +38,17 @@ namespace RuckusReloaded.Runtime.Player
                 action.performed += SwitchWeaponInputCallback(i);
             }
 
+        }
+
+        private void OnEnable()
+        {
+            currentWeaponIndex = -1;
+
+            foreach (var weapon in registeredWeapons)
+            {
+                weapon.gameObject.SetActive(false);
+            }
+            
             EquipWeapons(0);
         }
 
@@ -57,6 +68,8 @@ namespace RuckusReloaded.Runtime.Player
 
         private void EquipWeapons(int i)
         {
+            if (i == currentWeaponIndex) return;
+            
             if (CurrentWeapon) CurrentWeapon.gameObject.SetActive(false);
             currentWeaponIndex = i >= 0 && i < equippedWeapons.Length ? NameToIndex(equippedWeapons[i]) : -1;
             if (CurrentWeapon) CurrentWeapon.gameObject.SetActive(true);

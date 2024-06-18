@@ -56,7 +56,7 @@ SubShader{
 
 		#include "UnityCG.cginc"
 
-		struct appdata_t {
+		struct Appdata {
 			float4 vertex		: POSITION;
 			fixed4 color		: COLOR;
 			float2 texcoord0	: TEXCOORD0;
@@ -91,7 +91,7 @@ SubShader{
 			return output * 0.001953125;
 		}
 
-		v2f vert (appdata_t v)
+		v2f vert (Appdata v)
 		{
 			float4 vert = v.vertex;
 			vert.x += _VertexOffsetX;

@@ -16,5 +16,11 @@ namespace RuckusReloaded.Runtime.Utility
             var find = transform.Find(path);
             return find ? find.GetComponent<T>() : default;
         }
+
+        public static GameObject FindGameObject(this Transform transform, string path)
+        {
+            var find = transform.Find(path);
+            return find ? find.gameObject : null;
+        }
     }
 }

@@ -11,9 +11,6 @@ namespace RuckusReloaded.Runtime.Player
         public ProjectileSpawnArgs args;
         public bool singleFire = false;
         public float fireRate = 180.0f;
-        public int projectilesPerShot = 1;
-        [Range(0.0f, 10.0f)]
-        public float spread;
 
         [Space]
         public int ammo;
@@ -79,13 +76,8 @@ namespace RuckusReloaded.Runtime.Player
             if (Time.time < lastFireTime + 60.0f / fireRate) return;
             if (ammo == 0) return;
 
-            for (var i = 0; i < projectilesPerShot; i++)
-            {
-                var random = Random.insideUnitCircle;
-                var direction = MainCam.transform.TransformDirection(random.x * spread, random.y * spread, 10.0f).normalized;
-
-                projectile.SpawnFromPrefab(player.gameObject, args, MuzzlePosition, direction);
-            }
+            var direction = MainCam.transform.forward;
+            projectile.SpawnFromPrefab(player.gameObject, args, MuzzlePosition, direction);
 
             animator.Play("Shoot", 0, 0.0f);
             if (flash) flash.Play();
@@ -101,10 +93,10 @@ namespace RuckusReloaded.Runtime.Player
             Gizmos.color = Color.yellow;
             Gizmos.DrawSphere(muzzleOffset, 0.04f);
 
-            Gizmos.DrawRay(MuzzlePosition, new Vector3(spread, 0.0f, 10.0f).normalized);
-            Gizmos.DrawRay(MuzzlePosition, new Vector3(-spread, 0.0f, 10.0f).normalized);
-            Gizmos.DrawRay(MuzzlePosition, new Vector3(0.0f, spread, 10.0f).normalized);
-            Gizmos.DrawRay(MuzzlePosition, new Vector3(0.0f, -spread, 10.0f).normalized);
+            Gizmos.DrawRay(MuzzlePosition, new Vector3(args.spread, 0.0f, 10.0f).normalized);
+            Gizmos.DrawRay(MuzzlePosition, new Vector3(-args.spread, 0.0f, 10.0f).normalized);
+            Gizmos.DrawRay(MuzzlePosition, new Vector3(0.0f, args.spread, 10.0f).normalized);
+            Gizmos.DrawRay(MuzzlePosition, new Vector3(0.0f, -args.spread, 10.0f).normalized);
         }
 
         private void ResetFlags()

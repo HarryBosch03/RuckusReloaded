@@ -1,4 +1,5 @@
 using System.Linq;
+using RuckusReloaded.Runtime.Utility;
 using RuckusReloaded.Runtime.Vitality;
 using UnityEngine;
 
@@ -7,6 +8,7 @@ namespace RuckusReloaded.Runtime.Projectiles
     public class Projectile : MonoBehaviour
     {
         private GameObject hitFX;
+        private ParticleSystem trail;
 
         private ProjectileSpawnArgs args;
         private Vector3 velocity;
@@ -20,20 +22,46 @@ namespace RuckusReloaded.Runtime.Projectiles
         public static event System.Action<Projectile, RaycastHit> HitEvent;
         public static event System.Action<Projectile, RaycastHit, IDamageable, DamageArgs> DamageEvent;
         public static event System.Action<Projectile> DespawnEvent;
-        
+
         private void Awake()
         {
-            hitFX = transform.Find("HitFX").gameObject;
-            hitFX.SetActive(false);
+            hitFX = transform.FindGameObject("HitFX");
+            if (hitFX) hitFX.SetActive(false);
+
+            trail = transform.Find<ParticleSystem>("Trail");
         }
 
-        public Projectile SpawnFromPrefab(GameObject owner, ProjectileSpawnArgs args, Vector3 position, Vector3 direction)
+        public Projectile[] SpawnFromPrefab(GameObject owner, ProjectileSpawnArgs args, Vector3 position, Vector3 direction)
         {
-            var instance = Instantiate(this, position, Quaternion.LookRotation(direction));
+            return SpawnFromPrefab(owner, args, position, Quaternion.LookRotation(direction));
+        }
+        
+        public Projectile[] SpawnFromPrefab(GameObject owner, ProjectileSpawnArgs args, Vector3 position, Quaternion baseOrientation)
+        {
+            var instances = new Projectile[args.count];
+            for (var i = 0; i < args.count; i++)
+            {
+                var spread = Random.insideUnitCircle * args.spread;
+                var instanceOrientation = baseOrientation * Quaternion.Euler(SpreadToDeg(spread.x), SpreadToDeg(spread.y), 0.0f);
 
-            instance.owner = owner;
-            instance.SetupWithArgs(args);
-            return instance;
+                var instance = Instantiate(this, position, instanceOrientation);
+                instance.owner = owner;
+                instance.SetupWithArgs(args);
+                instances[i] = instance;
+            }
+            return instances;
+        }
+
+        private float SpreadToDeg(float spread)
+        {
+            return Mathf.Atan(spread) * Mathf.Rad2Deg;
+        }
+
+        private Vector3 GetTangent(Vector3 normal)
+        {
+            var a = Vector3.Cross(normal, Vector3.up);
+            var b = Vector3.Cross(normal, Vector3.forward);
+            return (a.magnitude > b.magnitude ? a : b).normalized;
         }
 
         private void SetupWithArgs(ProjectileSpawnArgs args)
@@ -68,7 +96,7 @@ namespace RuckusReloaded.Runtime.Projectiles
             foreach (var hit in hits.OrderBy(e => e.distance))
             {
                 HitEvent?.Invoke(this, hit);
-                
+
                 var damageable = hit.collider.GetComponentInParent<IDamageable>();
                 if (damageable != null)
                 {
@@ -98,10 +126,16 @@ namespace RuckusReloaded.Runtime.Projectiles
         private void SpawnFX(GameObject inlinePrefab, RaycastHit hit)
         {
             if (!inlinePrefab) return;
-            
-            var direction = Vector3.Reflect(velocity.normalized, hit.normal);
+
+            var direction = hit.normal;
             var instance = Instantiate(inlinePrefab, hit.point, Quaternion.LookRotation(direction));
             instance.SetActive(true);
+
+            if (trail)
+            {
+                trail.transform.SetParent(null);
+                trail.Stop();
+            }
         }
 
         private void Iterate()

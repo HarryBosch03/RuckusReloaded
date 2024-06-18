@@ -20,6 +20,8 @@ namespace RuckusReloaded.Runtime.Vitality
 
         public virtual void Damage(DamageInstance instance)
         {
+            Validate();
+            
             var damage = Mathf.Max(1, Mathf.FloorToInt(instance.Calculate()));
             currentHealth -= damage;
             
@@ -30,6 +32,8 @@ namespace RuckusReloaded.Runtime.Vitality
                 Die(instance);
             }
         }
+
+        private void Validate() { currentHealth = Mathf.Min(currentHealth, maxHealth); }
 
         public virtual void Die(DamageInstance instance)
         {
